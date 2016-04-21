@@ -1,0 +1,39 @@
+/*
+Custom stylesheet for IPython notebook to save in
+profile/static/custom/custom.css
+*/
+.container {
+    width: 98%;
+}
+
+div.cell {background: #ffffff;}
+div.cell.selected {border-radius: 5px; border: thin solid #09f;}
+.edit_mode div.cell.selected {border-radius: 5px; border: thin solid #f09}
+
+span.ansiblack {color: #282a2e;}
+span.ansiblue {color: #3971ED;}
+span.ansigray {color: #b4b7b4;}
+span.ansigreen {color: #198844;}
+span.ansipurple {color: #A36AC7;}
+span.ansired {color: #CC342B;}
+span.ansiyellow {color: #FBA922;}
+
+.cm-s-ipython.CodeMirror {background: #f8f8f8; color: #282a2e;}
+
+.cm-s-ipython span.cm-comment {color: #7991FF;}
+.cm-s-ipython span.cm-atom {color: #A36AC7;}
+.cm-s-ipython span.cm-number {color: #A36AC7;}
+
+.cm-s-ipython span.cm-property, .cm-s-ipython span.cm-attribute {color: #282a2e;}
+.cm-s-ipython span.cm-keyword {color: #CC342B;}
+.cm-s-ipython span.cm-string {color: #FBA922;}
+.cm-s-ipython span.cm-operator {color: #3971ED;}
+.cm-s-ipython span.cm-builtin {color: #A36AC7;}
+
+.cm-s-ipython span.cm-variable {color: #282a2e;}
+.cm-s-ipython span.cm-variable-2 {color: #3971ED;}
+.cm-s-ipython span.cm-def {color: #F96A38;}
+.cm-s-ipython span.cm-error {background: #CC342B; color: #969896;}
+.cm-s-ipython span.cm-bracket {color: #373b41;}
+.cm-s-ipython span.cm-tag {color: #CC342B;}
+.cm-s-ipython span.cm-link {color: #A36AC7;}
