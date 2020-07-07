@@ -221,7 +221,7 @@
 Move easily across frames with s-<arrow-key>.
 #+name: framemove
 #+begin_src elisp
-(push (expand-file-name "~/.local/emacs-packages") load-path)
+(push (expand-file-name "~/.local/elisp") load-path)
 (require 'framemove)
 (windmove-default-keybindings 'super)
 (setq framemove-hook-into-windmove t)
