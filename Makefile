@@ -3,9 +3,12 @@ install-brew:
 
 install-emacs:
 	@brew install emacs-mac --with-modules
-	$(MAKE) install-doom
+	@cp -r .doom.d ~/.doom.d
+	@mkdir -p ~/.local
+	@cp -r elisp ~/.local/elisp
+	@$(MAKE) install-doom-emacs
 
-install-doom:
+install-doom-emacs:
 	@git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 	@~/.emacs.d/bin/doom install
 
@@ -29,3 +32,13 @@ install-docker:
 
 install-dotfiles:
 	@cp -r .zshrc .gitconfig .aliases .envvar ~/
+
+# Brave Browser
+# - DarkReader
+# - LastPass
+# - Vimium
+# - Pocket
+#
+# Spotify
+# Pocket Reader
+# Spectacle
