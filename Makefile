@@ -34,6 +34,9 @@ install-docker:
 install-dotfiles:
 	@cp -r .zshrc .gitconfig .aliases .envvar ~/
 
+install-brew-tools:
+	@brew install graphviz aspell pandoc
+
 # Brave Browser
 # - DarkReader
 # - LastPass
