@@ -1,1 +1,4 @@
 alias rgf='rg --files | rg'
+alias ll='ls -lh'
+alias lla='ls -lah'
+alias la='ls -lah'
