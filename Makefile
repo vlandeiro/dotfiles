@@ -2,7 +2,8 @@ install-brew:
 	@bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 install-emacs:
-	@brew install emacs-mac --with-modules
+	@brew tap railwaycat/emacsmacport
+	@brew install emacs-mac --with-modules --with-rsvg
 	@cp -r .doom.d ~/.doom.d
 	@mkdir -p ~/.local
 	@cp -r elisp ~/.local/elisp
