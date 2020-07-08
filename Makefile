@@ -1,5 +1,5 @@
 install-brew:
-	@bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+	@bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 install-emacs:
 	@brew tap railwaycat/emacsmacport
