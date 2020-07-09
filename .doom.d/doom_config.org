@@ -356,13 +356,16 @@ Resizing frames
       (:prefix-map ("h" . "hydras")
        ;;:desc "multiple cursors" "c" #'hydra-multiple-cursors/body
        :desc "buffer resizing" "r" #'hydra-window-resizing/body
-       ;;:desc "jupyter" "j" #'jupyter-org-hydra/body
+       :desc "jupyter" "j" #'jupyter-org-hydra/body
        :desc "smerge" "m" #'+vc/smerge-hydra/body
        :desc "zoom" "z" #'+hydra/text-zoom/body
        ))
 
 (map! :map smerge-mode-map
       "s-m" #'+vc/smerge-hydra/body)
+
+(map! :map jupyter-org-interaction-mode-map
+      "s-h" #'jupyter-org-hydra/body)
 
 #+end_src
 
