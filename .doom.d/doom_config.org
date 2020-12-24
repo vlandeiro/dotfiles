@@ -27,6 +27,9 @@
        ;;deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
+       (emoji
+        +github
+        +unicode)
        ;; doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;; fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
@@ -42,7 +45,7 @@
        ;; (pretty-code
        ;; +ioveska)       ; replace bits of code with pretty symbols
        ;;tabs              ; an tab bar for Emacs
-       ;;treemacs          ; a project drawer, like neotree but cooler
+       treemacs          ; a project drawer, like neotree but cooler
        unicode           ; extended unicode support for various languages
        vc-gutter         ; vcs diff in the fringe
        ;; vi-tilde-fringe   ; fringe tildes to mark beyond EOB
@@ -61,7 +64,7 @@
        ;;objed             ; text object editing for the innocent
        ;;parinfer          ; turn lisp into python, sort of
        ;; rotate-text       ; cycle region at point between text candidates
-       ;; snippets          ; my elves. They type so I don't have to
+       snippets          ; my elves. They type so I don't have to
        word-wrap         ; soft wrapping with language-aware indent
 
        :emacs
@@ -95,9 +98,9 @@
         +docsets
         +dictionary
         +offline)        ; ...or in Dash docsets locally
-       ;;lsp
+       ;; lsp
        macos             ; MacOS-specific commands
-       magit             ; a git porcelain for Emacs
+       (magit +forge)             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
@@ -122,7 +125,7 @@
        ;;elixir            ; erlang done right
        ;;elm               ; care for a cup of TEA?
        emacs-lisp        ; drown in parentheses
-;;       ess               ; emacs speaks statistics
+       ;;       ess               ; emacs speaks statistics
        ;;fsharp           ; ML stands for Microsoft's Language
        ;;go                ; the hipster dialect
        ;;(haskell +intero) ; a language that's lazier than I am
@@ -144,16 +147,16 @@
         ;;+dragndrop       ; drag & drop files/images into org buffers
         +pandoc          ; export-with-pandoc support
         +jupyter
-        +journal
         +roam
+        +pretty
         ;;+present
         )        ; using org-mode for presentations
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
-       plantuml          ; diagrams for confusing people more
+       ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python
-        +conda
+        +pyenv
         +poetry)            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
@@ -167,6 +170,7 @@
        ;;swift             ; who asked for emoji variables?
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;web               ; the tubes
+       yaml
 
        :email
        ;;(mu4e +gmail)       ; WIP
@@ -185,7 +189,6 @@
        :config
        (default +bindings)
        )
-
 #+end_src
 
 * Config
@@ -195,7 +198,37 @@
 #+begin_src elisp
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
 #+end_src
-** Customize modules and modes
+** Coding
+*** Code folding
+#+begin_src elisp
+(define-key prog-mode-map (kbd "C-<tab>") '+fold/toggle)
+(define-key prog-mode-map (kbd "C-<") '+fold/close-all)
+(define-key prog-mode-map (kbd "C->") '+fold/open-all)
+#+end_src
+
+*** Python / Jupyter
+#+begin_src elisp
+(after! python
+  (setq-default flycheck-disabled-checkers '(python-pylint))
+  (add-hook! 'python-mode-hook
+             :append (anaconda-mode)
+             )
+  )
+
+(after! ob-jupyter
+  (org-babel-jupyter-override-src-block "python")
+  )
+#+end_src
+
+*** Magit
+#+begin_src elisp
+(after! magit
+  (setq magit-commit-show-diff nil)
+  )
+#+end_src
+
+
+** Moving / Loading
 *** Ivy
 #+begin_src elisp
 (after! ivy
@@ -205,56 +238,40 @@
   )
 #+end_src
 
-#+RESULTS:
-: ivy-immediate-done
-
-#+begin_src elisp
-(define-key prog-mode-map (kbd "C-<tab>") '+fold/toggle)
-(define-key prog-mode-map (kbd "C-<") '+fold/close-all)
-(define-key prog-mode-map (kbd "C->") '+fold/open-all)
-#+end_src
-
-#+RESULTS:
-: +fold/open-all
-
 *** Framemove
 Move easily across frames with s-<arrow-key>.
+
 #+name: framemove
 #+begin_src elisp
-(push (expand-file-name "~/.local/elisp") load-path)
+(push (expand-file-name "~/repos/dotfiles/elisp") load-path)
 (require 'framemove)
 (windmove-default-keybindings 'super)
 (setq framemove-hook-into-windmove t)
 #+end_src
-
-*** Golden ratio
-
-#+begin_src elisp
-(custom-set-variables
- '(zoom-mode nil))
-
-(custom-set-variables
- '(zoom-size '(0.618 . 0.618)))
-#+end_src
-
-#+RESULTS:
 
 *** Avy
 Make avy work across all windows and add quick bindings for avy goto.
 #+name: avy
 #+begin_src elisp
 (setq avy-all-windows 'all-frames)
-(map! "s-." #'avy-goto-char-timer
-      "s-j" #'avy-goto-char)
+(map! :leader
+      (:prefix ("m" . "move")
+       :desc "by word/subword" "w" #'avy-goto-word-or-subword-1
+       :desc "by char" "c" #'avy-goto-char
+       :desc "by many characters" "t" #'avy-goto-char-timer
+       )
+      )
 #+end_src
+
+
+** Writing / Reading / Drawing
 
 *** Org
 **** General
 This does a few things:
-- tangles on save
-- change the agenda files to point to the org journal files
+- change the agenda files to point to one todo file
+- create a default file for notes
 - update todo keywords
-- [ ] set up twbs header
 - enable auto fill
 - display inline images
 - indent org files automatically
@@ -262,10 +279,20 @@ This does a few things:
 (after! org
   (setq
    org-confirm-babel-evaluate nil
+   org-agenda-files '("/Users/virgile/org/todo.org")
    org-default-notes-file (expand-file-name "~/org/notes.org")
    org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE" "ARCHIVED")
                        (sequence "QUESTION" "WORKING-ON-IT" "|" "ANSWERED"))
-   ;; Roam
+   )
+  (add-hook! 'org-mode-hook :append #'turn-on-auto-fill #'org-indent-mode)
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+  )
+#+end_src
+
+**** Roam
+#+begin_src elisp
+(after! org
+  (setq
    org-roam-graph-viewer "open"
    org-roam-dailies-capture-templates '(("d"
                                          "daily"
@@ -274,40 +301,11 @@ This does a few things:
                                          :immediate-finish t
                                          :file-name "dailies/%<%Y-%m-%d>"
                                          :head "#+TITLE: %<%Y-%m-%d>"))
-   org-roam-tickets-capture-templates '(("t"
-                                         "tickets"
-                                         plain
-                                         (function org-roam-capture--get-point)
-                                         "%?"
-                                         :file-name "jira-tickets/%<%Y%m%d%H%M%S>-${ticket}"
-                                         :head "#+TITLE: ${ticket}\n#+ROAM_KEY: https://tempuslabs.atlassian.net/browse/${ticket}"))
    org-roam-graph-exclude-matcher '("private" "dailies" "jira-tickets")
    )
-
-  (defun org-roam-jira-capture ()
-    (interactive)
-    (unless org-roam-mode (org-roam-mode))
-    (let ((org-roam-capture-templates org-roam-tickets-capture-templates)
-          (org-roam-capture--context 'title)
-          (org-roam-capture--info (list (cons 'ticket (completing-read "Ticket number: " nil)))))
-      (add-hook 'org-capture-after-finalize-hook #'org-roam-capture--find-file-h)
-      (org-roam--with-template-error 'org-roam-dailies-capture-templates
-        (org-roam-capture--capture))))
-
-  (map! :leader
-        :desc "JIRA ticket"
-        "n r t"
-        #'org-roam-jira-capture)
-
-
-  (add-hook! 'org-mode-hook :append #'turn-on-auto-fill #'org-indent-mode)
-  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
   )
+
 #+end_src
-
-#+RESULTS:
-| org-display-inline-images | org-redisplay-inline-images |
-
 
 **** Bindings
 #+begin_src elisp
@@ -315,7 +313,8 @@ This does a few things:
   (map! :map org-mode-map
         "C-<return>" #'org-insert-heading
         "C-M-<right>" #'org-demote-subtree
-        "C-M-<left>" #'org-promote-subtree)
+        "C-M-<left>" #'org-promote-subtree
+        )
 
   (map! :map org-mode-map :leader
         (:prefix-map ("i" . "insert")
@@ -326,12 +325,85 @@ This does a few things:
          :desc "subheading" "s" #'org-insert-subheading
          :desc "template" "t" #'org-insert-structure-template
          ))
-
-  (require 'ox-gfm nil t)
-  (require 'ox-twbs nil t)
   )
 #+end_src
 
+**** Additional export mode
+#+begin_src elisp
+(after! org
+  (require 'ox-gfm nil t)
+  (require 'ox-twbs nil t)
+  (require 'ox-rst nil t)
+  )
+#+end_src
+
+*** Elfeed
+#+begin_src elisp
+(after! elfeed
+  (setq-default elfeed-search-filter "@2-days-ago -work")
+  (map! :map elfeed-show-mode-map
+        "a" #'pocket-reader-add-link)
+  (map! :map elfeed-search-mode-map
+        "a" #'pocket-reader-add-link)
+  )
+#+end_src
+
+*** Zen mode
+Turn off text zooming
+#+begin_src elisp
+(setq +zen-text-scale 0)
+#+end_src
+
+#+RESULTS:
+: 0
+
+Increase width
+#+begin_src elisp
+(setq writeroom-width 120)
+#+end_src
+
+*** Mermaid
+#+begin_src elisp
+(setq ob-mermaid-cli-path (executable-find "mmdc"))
+#+end_src
+
+*** Treemacs
+#+begin_src elisp
+(after! treemacs
+  (map! :map treemacs-mode-map
+        "SPC" #'treemacs-peek)
+  )
+
+(map! :leader
+      :desc "treemacs" "t t" #'treemacs)
+#+end_src
+
+#+RESULTS:
+: treemacs
+
+** Global changes
+*** Key bindings
+#+begin_src elisp
+(map! [home] #'move-beginning-of-line
+      [end] #'move-end-of-line
+      "C-x g" #'magit-status
+      "s-k" #'doom/kill-this-buffer-in-all-windows
+      "C-/" #'company-filter-candidates
+      )
+#+end_src
+
+#+RESULTS:
+
+Remove default smartparens bindings.
+#+begin_src elisp
+(after! smartparens
+  (map! :map smartparens-mode-map
+        "C-<left>" nil
+        "C-<right>" nil
+        "M-<left>" nil
+        "M-<right>" nil)
+  )
+#+end_src
 *** Hydras
 **** Resize window
 #+begin_src elisp
@@ -350,13 +422,13 @@ Resizing frames
   ("<left>" shrink-window-horizontally)
   )
 #+end_src
+
 **** Bindings
 #+begin_src elisp
 (map! :leader
       (:prefix-map ("h" . "hydras")
-       ;;:desc "multiple cursors" "c" #'hydra-multiple-cursors/body
        :desc "buffer resizing" "r" #'hydra-window-resizing/body
-       ;;:desc "jupyter" "j" #'jupyter-org-hydra/body
+       :desc "jupyter" "j" #'jupyter-org-hydra/body
        :desc "smerge" "m" #'+vc/smerge-hydra/body
        :desc "zoom" "z" #'+hydra/text-zoom/body
        ))
@@ -364,126 +436,71 @@ Resizing frames
 (map! :map smerge-mode-map
       "s-m" #'+vc/smerge-hydra/body)
 
+(map! :map org-mode-map
+      "s-h" #'jupyter-org-hydra/body)
+
 #+end_src
-
-#+RESULTS:
-
-*** Python / Jupyter
-#+begin_src elisp
-(after! python
-  (setq conda-anaconda-home (expand-file-name "~/miniconda3"))
-  (setq conda-env-home-directory (expand-file-name "~/miniconda3"))
-  (setq-default flycheck-disabled-checkers '(python-pylint)))
-#+end_src
-
-#+RESULTS:
-| python-pylint |
-
-*** Magit
-#+begin_src elisp
-(after! magit
-  (setq magit-commit-show-diff nil)
-  )
-#+end_src
-
-#+RESULTS:
-
-*** Elfeed
-#+begin_src elisp
-(after! elfeed
-  (setq-default elfeed-search-filter "@2-days-ago -work")
-  (map! :map elfeed-show-mode-map
-        "a" #'pocket-reader-add-link)
-  (map! :map elfeed-search-mode-map
-        "a" #'pocket-reader-add-link)
-  )
-#+end_src
-
-#+RESULTS:
-
-** Map file extensions to modes
-#+name: map_extensions
-#+begin_src elisp :tangle no
-(add-to-list 'auto-mode-alist '("Jenkinsfile'" . groovy-mode))
-#+end_src
-
-** Miscellaneous
-*** Display time
-#+begin_src elisp
-(display-time)
-#+end_src
-*** Turn on wrap mode
+*** Modes
+Turn on wrap mode
 #+begin_src elisp
 (+global-word-wrap-mode 1)
 #+end_src
-*** Display directory name in buffer name when file names are the same
+
+Allow camel case navigation *everywhere*
+#+begin_src elisp
+(global-subword-mode)
+#+end_src
+
+*** Others
+Display time in current frame
+#+begin_src elisp
+(display-time)
+#+end_src
+
+Display directory name in buffer name when file names are the same
 #+begin_src elisp
 (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
 #+end_src
-*** Allow camel case navigation in prog-mode
-#+begin_src elisp
-(add-hook! prog-mode :append (subword-mode 1))
-#+end_src
-*** Other bindings
-#+name: global_bindings
-#+begin_src elisp
-(map! [home] #'move-beginning-of-line
-      [end] #'move-end-of-line
-      "C-x g" #'magit-status
-      "s-b" #'projectile-switch-to-buffer
-      "s-f" #'swiper
-      "s-k" #'kill-current-buffer
-      )
-#+end_src
 
-#+RESULTS: global_bindings
-
-*** Remove doom word-move bindings
-#+begin_src elisp
-(after! smartparens
-  (map! :map smartparens-mode-map
-        "C-<left>" nil
-        "C-<right>" nil
-        "M-<left>" nil
-        "M-<right>" nil)
-  )
-#+end_src
-
-*** Set up nice fonts
-#+begin_src elisp
-(setq doom-font (font-spec :family "Hack" :size 13))
-#+end_src
-
-*** Turn off confirmation message at exit time
+Turn off confirmation message at exit time
 #+begin_src elisp
 (setq confirm-kill-emacs nil)
 #+end_src
 
-*** Change theme
-#+begin_src elisp
-(setq doom-theme 'doom-palenight)
-(doom/reload-theme)
-#+end_src
-
-#+RESULTS:
-| #<frame doom_config.org – Doom Emacs 0x1078a72b8> |
-
-*** Customize zen mode
-Turn off text zooming
-#+begin_src elisp
-(setq +zen-text-scale 0)
-#+end_src
-
-Increase width
-#+begin_src elisp
-(setq writeroom-width 120)
-#+end_src
-
-*** Increase garbage collector limit
+Increase garbage collector limit
 #+begin_src elisp
 (after! gcmh
   (setq gcmh-high-cons-threshold 33554432))
 #+end_src
+
+Doom popups
+#+begin_src elisp
+(map! :leader
+      :desc "Show popup" "t p" #'+popup/toggle
+      )
+#+end_src
+
+** Theme
+*** Change theme
+#+begin_src elisp
+(load-theme 'doom-palenight t)
+(setq doom-themes-enable-bold nil)
+(set-face-bold-p 'bold nil)
+#+end_src
+
+#+RESULTS:
+
+*** Customize fonts
+#+begin_src elisp
+(setq mixed-pitch-set-height t)
+(setq doom-font (font-spec :family "Hack" :size 13)
+      doom-variable-pitch-font (font-spec :family "Lora" :size 14)
+      )
+(doom/reload-font)
+#+end_src
+
+#+RESULTS:
+| #<frame doom_config.org – Doom Emacs 0x7f95eb056520> |
 
 * Packages
 :PROPERTIES:
@@ -492,9 +509,12 @@ Increase width
 
 #+begin_src elisp
 (package! ox-gfm)
-(package! zoom)
-(package! pocket-reader)
 (package! ox-twbs)
+(package! ox-rst)
+(package! pocket-reader)
+(package! zoom)
+(package! ob-mermaid)
+(package! mermaid-mode)
 #+end_src
 
 * Local Variables
