@@ -5,3 +5,4 @@
 (package! zoom)
 (package! ob-mermaid)
 (package! mermaid-mode)
+(package! python-docstring)

@@ -8,6 +8,7 @@
   (setq-default flycheck-disabled-checkers '(python-pylint))
   (add-hook! 'python-mode-hook
              :append (anaconda-mode)
+             :append (python-docstring-mode)
              )
   )
 
