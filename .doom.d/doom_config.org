@@ -1,6 +1,6 @@
 * Init
 :PROPERTIES:
-:header-args: :tangle init.el
+:header-args: :tangle ~/.doom.d/init.el
 :END:
 
 #+begin_src elisp
@@ -99,7 +99,6 @@
         +dictionary
         +offline)        ; ...or in Dash docsets locally
        ;; lsp
-       macos             ; MacOS-specific commands
        (magit +forge)             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -186,6 +185,9 @@
        (rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought
 
+       :os
+       macos             ; MacOS-specific commands
+
        :config
        (default +bindings)
        )
@@ -193,7 +195,7 @@
 
 * Config
 :PROPERTIES:
-:header-args: :tangle config.el
+:header-args: :tangle ~/.doom.d/config.el
 :END:
 #+begin_src elisp
 ;;; .doom.d/config.el -*- lexical-binding: t; -*-
@@ -297,18 +299,19 @@ This does a few things:
 (after! org
   (setq
    org-roam-graph-viewer "open"
-   org-roam-dailies-capture-templates '(("d"
-                                         "daily"
-                                         plain
-                                         (function org-roam-capture--get-point)
-                                         :immediate-finish t
-                                         :file-name "dailies/%<%Y-%m-%d>"
-                                         :head "#+TITLE: %<%Y-%m-%d>"))
-   org-roam-graph-exclude-matcher '("private" "dailies" "jira-tickets")
+   org-roam-dailies-directory "daily/"
+   org-roam-dailies-capture-templates '(("d" "default" entry
+                                         #'org-roam-capture--get-point
+                                         "* %?"
+                                         :file-name "daily/%<%Y-%m-%d>"
+                                         :head "#+TITLE: %<%Y-%m-%d>\n\n"))
+   org-roam-graph-exclude-matcher '("private" "daily" "dailies" "jira-tickets")
    )
   )
-
 #+end_src
+
+#+RESULTS:
+| private | dailies | jira-tickets |
 
 **** Bindings
 #+begin_src elisp
@@ -496,7 +499,7 @@ Doom popups
 #+begin_src elisp
 (setq mixed-pitch-set-height t)
 (setq doom-font (font-spec :family "Hack" :size 13)
-      doom-variable-pitch-font (font-spec :family "Lora" :size 14)
+      doom-variable-pitch-font (font-spec :family "Lora" :size 16)
       )
 (doom/reload-font)
 #+end_src
@@ -506,7 +509,7 @@ Doom popups
 
 * Packages
 :PROPERTIES:
-:header-args: :tangle packages.el
+:header-args: :tangle ~/.doom.d/packages.el
 :END:
 
 #+begin_src elisp
