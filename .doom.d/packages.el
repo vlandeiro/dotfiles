@@ -1,8 +1,0 @@
-(package! ox-gfm)
-(package! ox-twbs)
-(package! ox-rst)
-(package! pocket-reader)
-(package! zoom)
-(package! ob-mermaid)
-(package! mermaid-mode)
-(package! python-docstring)
