@@ -304,14 +304,14 @@ This does a few things:
                                          #'org-roam-capture--get-point
                                          "* %?"
                                          :file-name "daily/%<%Y-%m-%d>"
-                                         :head "#+TITLE: %<%Y-%m-%d>\n\n"))
-   org-roam-graph-exclude-matcher '("private" "daily" "dailies" "jira-tickets")
+                                         :head "#+TITLE: %<%Y-%m-%d>\n\n* Check-in [/]\n"))
+   org-roam-graph-exclude-matcher '("private" "daily" "jira-tickets")
    )
   )
 #+end_src
 
 #+RESULTS:
-| private | dailies | jira-tickets |
+| private | daily | jira-tickets |
 
 **** Bindings
 #+begin_src elisp
