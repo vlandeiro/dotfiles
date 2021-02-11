@@ -22,7 +22,10 @@
 #+begin_src sh :eval no :tangle ~/.zshrc
 source ~/.aliases
 source ~/.envvar
+source ~/.tempus.envvar
 source ~/.myrc
+
+export ZSH_DISABLE_COMPFIX="true"
 
 eval "$(starship init zsh)"
 
@@ -39,6 +42,29 @@ if [ -f ~/apps/google-cloud-sdk/path.zsh.inc ]; then source ~/apps//google-cloud
 # The next line enables shell command completion for gcloud.
 if [ -f ~/apps/google-cloud-sdk/completion.zsh.inc ]; then source ~/apps//google-cloud-sdk/completion.zsh.inc; fi
 
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('$HOME/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="$HOME/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+# init pyenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+autoload -U +X bashcompinit && bashcompinit
+eval "$(starship init zsh)"
 #+end_src
 
 *** Plugins
@@ -53,6 +79,8 @@ git clone --depth 1 https://github.com/marlonrichert/zsh-snap.git ~/repos/zsh-sn
 **** Set up plugins
 #+begin_src sh :eval no :tangle ~/.zsh_plugins
 znap source ohmyzsh/ohmyzsh plugins/git
+znap source ohmyzsh/ohmyzsh plugins/pip
+znap source ohmyzsh/ohmyzsh plugins/osx
 znap source ohmyzsh/ohmyzsh plugins/gcloud
 znap source zsh-users/zsh-autosuggestions
 znap source zsh-users/zsh-syntax-highlighting
@@ -88,7 +116,7 @@ curl -fsSL https://starship.rs/install.sh | bash
 [directory]
 truncate_to_repo = false
 #+end_src
-* Command Line Tools
+** Command Line Tools
 Installs a bunch of useful tools
 #+begin_src sh 
 brew install graphviz aspell pandoc ripgrep jq
@@ -101,6 +129,12 @@ curl -sS https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh 
 bash ~/miniconda.sh -b -p "$HOME/miniconda3"
 rm ~/miniconda.sh
 #+end_src
+
+** Pyenv
+#+begin_src sh
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+#+end_src
+
 ** Poetry
 #+begin_src sh 
 curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
@@ -364,9 +398,20 @@ Host *
 (after! ob-jupyter
   (org-babel-jupyter-override-src-block "python")
   )
+
+(defun +virgile/close-on-already-formatted (FORMATTER STATUS)
+  "Closes the format-all window if the document was formatted without any error"
+  (if (member STATUS '(:already-formatted :reformatted))
+      (delete-window (get-buffer-window "*format-all-errors*")))
+  )
+
+(after! format-all
+  (add-hook! 'format-all-after-format-functions :append +virgile/close-on-already-formatted)
+  )
 #+end_src
 
 #+RESULTS:
+| +virgile/close-on-already-formatted |
 
 **** Magit
 #+begin_src elisp
@@ -427,7 +472,7 @@ This does a few things:
 (after! org
   (setq
    org-confirm-babel-evaluate nil
-   org-agenda-files '("/Users/virgile/org/todo.org")
+   org-agenda-files '("~/org/todo.org")
    org-default-notes-file (expand-file-name "~/org/notes.org")
    org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE" "ARCHIVED")
                        (sequence "QUESTION" "WORKING-ON-IT" "|" "ANSWERED"))
@@ -436,6 +481,9 @@ This does a few things:
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
   )
 #+end_src
+
+#+RESULTS:
+| org-display-inline-images | org-redisplay-inline-images |
 
 ***** Roam
 #+begin_src elisp
@@ -680,8 +728,3 @@ Doom popups
 `%`$0
 ,#+end_src
 #+END_src
-
-* Local Variables
-# Local Variables:
-# eval: (add-hook 'after-save-hook (lambda ()(org-babel-tangle)) nil t)
-# End:
