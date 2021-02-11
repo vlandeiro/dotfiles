@@ -447,8 +447,8 @@ This does a few things:
                                          #'org-roam-capture--get-point
                                          "* %?"
                                          :file-name "daily/%<%Y-%m-%d>"
-                                         :head "#+TITLE: %<%Y-%m-%d>\n\n"))
-   org-roam-graph-exclude-matcher '("private" "daily" "dailies" "jira-tickets")
+                                         :head "#+TITLE: %<%Y-%m-%d>\n\n* Check-in [/]\n"))
+   org-roam-graph-exclude-matcher '("private" "daily" "jira-tickets")
    )
   )
 #+end_src
@@ -665,6 +665,21 @@ Doom popups
 (package! mermaid-mode)
 (package! python-docstring)
 #+end_src
+
+** Snippets
+
+*** Org mode
+#+BEGIN_SRC snippet :tangle ~/.doom.d/snippets/org-mode/jupyter-python
+# -*- mode: snippet -*-
+# contributor: Virgile Landeiro
+# name: #+begin_src jupyter-python
+# uuid: jupyter-python
+# key: <jp
+# --
+,#+begin_src jupyter-python
+`%`$0
+,#+end_src
+#+END_src
 
 * Local Variables
 # Local Variables:
