@@ -442,6 +442,8 @@ Move easily across frames with s-<arrow-key>.
 (setq framemove-hook-into-windmove t)
 #+end_src
 
+
+
 **** Avy
 Make avy work across all windows and add quick bindings for avy goto.
 #+name: avy

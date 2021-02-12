@@ -1,5 +1,0 @@
-export PATH="$HOME/miniconda3/bin:$PATH"
-export PATH="$PATH:$HOME/.emacs.d/bin"
-export PATH="$HOME/.local/bin:$PATH"
-
-export EDITOR="emacs -nw"
