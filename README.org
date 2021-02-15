@@ -504,24 +504,15 @@ This does a few things:
                                          :head "#+TITLE: %<%Y-%m-%d>\n\n* Check-in [/]\n"))
    org-roam-graph-exclude-matcher '("private" "daily" "jira-tickets")
    )
+  (add-to-list 'org-roam-capture-templates
+               '("j" "JIRA ticket" plain
+                 #'org-roam-capture--get-point
+                 "%?"
+                 :file-name "jira-tickets/%<%Y%m%d%H%M%S>-${title}"
+                 :head "#+TITLE: ${title}\n#+ROAM_KEY: https://tempuslabs.atlassian.net/browse/${title}\n\n")
+               )
   )
 #+end_src
-
-#+RESULTS:
-| private | daily | jira-tickets |
-
-#+begin_src elisp
-(add-to-list 'org-roam-capture-templates
-             '("j" "JIRA ticket" plain
-               #'org-roam-capture--get-point
-               "%?"
-               :file-name "jira-tickets/%<%Y%m%d%H%M%S>-${title}"
-               :head "#+TITLE: ${title}\n#+ROAM_KEY: https://tempuslabs.atlassian.net/browse/${title}\n\n")
-             )
-#+end_src
-
-#+RESULTS:
-| j | JIRA ticket | plain | #'org-roam-capture--get-point | %? | :file-name | jira-tickets/%<%Y%m%d%H%M%S>-${title} | :head | #+TITLE: ${title} |
 
 ***** Bindings
 #+begin_src elisp
