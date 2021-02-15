@@ -511,7 +511,6 @@ This does a few things:
 | private | daily | jira-tickets |
 
 #+begin_src elisp
-(setq org-roam-capture-templates nil)
 (add-to-list 'org-roam-capture-templates
              '("j" "JIRA ticket" plain
                #'org-roam-capture--get-point
