@@ -748,3 +748,18 @@ Doom popups
 `%`$0
 ,#+end_src
 #+END_src
+
+#+BEGIN_SRC snippet :tangle ~/.doom.d/snippets/org-mode/meeting
+# -*- mode: snippet -*-
+# contributor: Virgile Landeiro
+# name: New meeting
+# uuid: new-meeting
+# key: <meet
+# --
+,* $1
+:PROPERTIES:
+:ATTENDEES: $2
+:END:
+
+$0
+#+END_src
