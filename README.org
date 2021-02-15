@@ -394,23 +394,28 @@ Host *
              )
   )
 
-(after! ob-jupyter
-  (org-babel-jupyter-override-src-block "python")
-  )
-
 (defun +virgile/close-on-already-formatted (FORMATTER STATUS)
   "Closes the format-all window if the document was formatted without any error"
-  (if (member STATUS '(:already-formatted :reformatted))
-      (delete-window (get-buffer-window "*format-all-errors*")))
+  (let (format-all-window (get-buffer-window "*format-all-errors*"))
+    (if (and (member STATUS '(:already-formatted :reformatted))
+             format-all-window)
+        (delete-window format-all-window))
+    )
   )
 
 (after! format-all
   (add-hook! 'format-all-after-format-functions :append +virgile/close-on-already-formatted)
   )
+
+(defun +virgile/setup-org-jupyter nil
+  "Avoid emacs-jupyter / ob-async incompatibility"
+  (interactive)
+  (setq ob-async-no-async-languages-alist '("jupyter-python"))
+  )
 #+end_src
 
 #+RESULTS:
-| +virgile/close-on-already-formatted |
+: +virgile/setup-org-jupyter
 
 **** Magit
 #+begin_src elisp
