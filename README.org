@@ -470,7 +470,6 @@ Make avy work across all windows and add quick bindings for avy goto.
 This does a few things:
 - change the agenda files to point to one todo file
 - create a default file for notes
-- update todo keywords
 - enable auto fill
 - display inline images
 - indent org files automatically
@@ -478,10 +477,8 @@ This does a few things:
 (after! org
   (setq
    org-confirm-babel-evaluate nil
-   org-agenda-files '("~/org/todo.org")
+   org-agenda-files '("~/org/roam")
    org-default-notes-file (expand-file-name "~/org/notes.org")
-   org-todo-keywords '((sequence "TODO" "DOING" "|" "DONE" "ARCHIVED")
-                       (sequence "QUESTION" "WORKING-ON-IT" "|" "ANSWERED"))
    )
   (add-hook! 'org-mode-hook :append #'turn-on-auto-fill #'org-indent-mode)
   (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
@@ -501,7 +498,7 @@ This does a few things:
                                          #'org-roam-capture--get-point
                                          "* %?"
                                          :file-name "daily/%<%Y-%m-%d>"
-                                         :head "#+TITLE: %<%Y-%m-%d>\n\n* Check-in [/]\n"))
+                                         :head "#+TITLE: %<%Y-%m-%d>\n#+DATE: <%<%Y-%m-%d %a>>\n\n* Check-in [/]\n"))
    org-roam-graph-exclude-matcher '("private" "daily" "jira-tickets")
    )
   (add-to-list 'org-roam-capture-templates
@@ -535,7 +532,9 @@ This does a few things:
   )
 #+end_src
 
-***** Additional export mode
+***** Export
+
+Add some export modes (github, html, rst)
 #+begin_src elisp
 (after! org
   (require 'ox-gfm nil t)
@@ -543,6 +542,20 @@ This does a few things:
   (require 'ox-rst nil t)
   )
 #+end_src
+
+Change default export options (no toc, latex-style superscript)
+
+#+begin_src elisp
+(after! org
+  (setq
+   org-export-with-toc nil
+   org-export-with-sub-superscripts '{}
+   org-export-with-smart-quotes nil
+   )
+  )
+#+end_src
+
+#+RESULTS:
 
 **** Elfeed
 #+begin_src elisp
@@ -722,6 +735,7 @@ Doom popups
 (package! ob-mermaid)
 (package! mermaid-mode)
 (package! python-docstring)
+(package! org-ql)
 #+end_src
 
 ** Snippets
