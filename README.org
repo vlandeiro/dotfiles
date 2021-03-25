@@ -492,11 +492,8 @@ Make avy work across all windows and add quick bindings for avy goto.
 #+end_src
 
 *** Writing / Reading / Drawing
-
 **** Org
-
 ***** General
-
 This does a few things:
 - change the agenda files to point to the org-roam files
 - create a default file for notes
@@ -504,25 +501,25 @@ This does a few things:
 - display inline images
 
 #+begin_src elisp
-(after! org
-  (setq
-   org-confirm-babel-evaluate nil
-   org-agenda-files '("~/org/roam")
-   org-hide-emphasis-markers t
-   org-default-notes-file (expand-file-name "~/org/notes.org")
-   org-superstar-remove-leading-stars t
-   org-hide-leading-stars nil
-   org-superstar-leading-bullet ?\s
-   org-superstar-headline-bullets-list '("#")
-   org-superstar-prettify-item-bullets nil)
-  (add-hook! 'org-mode-hook
-             #'org-num-mode
-             #'visual-line-mode
-             #'org-superstar-mode
-             #'mixed-pitch-mode
-             (lambda () (hl-line-mode 0))
-             (lambda () (org-indent-mode 0))
-             'org-display-inline-images))
+3
+#+end_src
+
+#+RESULTS:
+: 3
+
+#+begin_src elisp
+(setq org-confirm-babel-evaluate nil
+      org-agenda-files '("~/org/roam")
+      org-hide-emphasis-markers t
+      org-default-notes-file (expand-file-name "~/org/notes.org")
+      org-hide-leading-stars nil)
+(add-hook! 'org-mode-hook
+           #'org-num-mode
+           #'visual-line-mode)
+(add-hook! 'org-mode-hook
+  (display-line-numbers-mode 0)
+  (highlight-indent-guides-mode 0)
+  (hl-line-mode 0))
 #+end_src
 
 #+begin_src elisp
@@ -535,36 +532,31 @@ Setup headlines fonts to use the ETBembo family and decreasing size.
 #+begin_src elisp
 (after! org
   (custom-set-faces!
-    `(org-level-1 :inherit outline-1
-                  :family "ETBembo" :height 1.4
-                  :weight normal :slant normal
-                  :foreground ,(doom-color 'fg)
-                  :box (:line-width 3 :color ,(doom-color 'bg)))
-    `(org-level-2 :inherit variable-pitch
-                  :family "ETBembo" :height 1.3
-                  :weight normal :slant normal
-                  :foreground ,(doom-color 'fg)
-                  :box (:line-width 1 :color ,(doom-color 'bg)))
-    `(org-level-3 :inherit variable-pitch :family "ETBembo" :height 1.2 :weight normal :slant normal :foreground ,(doom-color 'fg))
-    `(org-level-4 :inherit variable-pitch :family "ETBembo" :height 1.2 :weight normal :slant italic :foreground ,(doom-color 'fg))
-    `(org-level-5 :inherit variable-pitch :family "ETBembo" :height 1.1 :weight normal :slant italic :foreground ,(doom-color 'fg))
-    `(org-level-6 :inherit variable-pitch :family "ETBembo" :height 1.0 :weight normal :slant italic :foreground ,(doom-color 'fg))
-    `(org-level-7 :inherit variable-pitch :family "ETBembo" :height 1.0 :weight normal :slant italic :foreground ,(doom-color 'fg))
-    `(org-level-8 :inherit variable-pitch :family "ETBembo" :height 1.0 :weight normal :slant italic :foreground ,(doom-color 'fg))
-    `(org-superstar-header-bullet :foreground ,(doom-color 'base5))
+    ;; `(org-level-1 :inherit outline-1
+    ;;               :family "ETBembo" :height 1.4
+    ;;               :weight normal :slant normal
+    ;;               :foreground ,(doom-color 'fg)
+    ;;               :box (:line-width 3 :color ,(doom-color 'bg)))
+    ;; `(org-level-2 :inherit variable-pitch
+    ;;               :family "ETBembo" :height 1.3
+    ;;               :weight normal :slant normal
+    ;;               :foreground ,(doom-color 'fg)
+    ;;               :box (:line-width 1 :color ,(doom-color 'bg)))
+    ;; `(org-level-3 :inherit variable-pitch :family "ETBembo" :height 1.2 :weight normal :slant normal :foreground ,(doom-color 'fg))
+    ;; `(org-level-4 :inherit variable-pitch :family "ETBembo" :height 1.2 :weight normal :slant italic :foreground ,(doom-color 'fg))
+    ;; `(org-level-5 :inherit variable-pitch :family "ETBembo" :height 1.1 :weight normal :slant italic :foreground ,(doom-color 'fg))
+    ;; `(org-level-6 :inherit variable-pitch :family "ETBembo" :height 1.0 :weight normal :slant italic :foreground ,(doom-color 'fg))
+    ;; `(org-level-7 :inherit variable-pitch :family "ETBembo" :height 1.0 :weight normal :slant italic :foreground ,(doom-color 'fg))
+    ;; `(org-level-8 :inherit variable-pitch :family "ETBembo" :height 1.0 :weight normal :slant italic :foreground ,(doom-color 'fg))
+    `(org-block-begin-line :slant normal)
+    `(org-block-end-line :slant normal)
+    ;; `(org-superstar-header-bullet :foreground ,(doom-color 'grey))
     `(org-num-face :height 1.0)
     `(org-drawer :inherit org-block :background ,(doom-color 'bg) :foreground ,(doom-color 'blue))))
 #+end_src
 
 #+RESULTS:
-| doom--customize-themes-h-13 | doom--customize-themes-h-784 | doom--customize-themes-h-785 | doom--customize-themes-h-786 | doom--customize-themes-h-838 | doom--customize-themes-h-844 | doom--customize-themes-h-845 | doom--customize-themes-h-846 | doom--customize-themes-h-847 | doom--customize-themes-h-848 | doom--customize-themes-h-850 | doom--customize-themes-h-851 | doom--customize-themes-h-852 | doom--customize-themes-h-853 | doom--customize-themes-h-854 | doom--customize-themes-h-855 | doom--customize-themes-h-856 | doom--customize-themes-h-857 | doom--customize-themes-h-858 | doom--customize-themes-h-860 | doom--customize-themes-h-861 | doom--customize-themes-h-862 | doom--customize-themes-h-863 | doom--customize-themes-h-864 | doom--customize-themes-h-865 | doom--customize-themes-h-866 | doom--customize-themes-h-867 | doom--customize-themes-h-868 | doom--customize-themes-h-869 | doom--customize-themes-h-871 | doom--customize-themes-h-872 | doom--customize-themes-h-873 | doom--customize-themes-h-874 | doom--customize-themes-h-875 | doom--customize-themes-h-876 | doom--customize-themes-h-877 | doom--customize-themes-h-878 | doom--customize-themes-h-879 | doom--customize-themes-h-880 | doom--customize-themes-h-881 | doom--customize-themes-h-882 | doom--customize-themes-h-883 | doom--customize-themes-h-884 | doom--customize-themes-h-886 | doom--customize-themes-h-887 | doom--customize-themes-h-888 | doom--customize-themes-h-889 | doom--customize-themes-h-890 | doom--customize-themes-h-891 | doom--customize-themes-h-892 | doom--customize-themes-h-893 | doom--customize-themes-h-894 |
-
-#+begin_src elisp
-(setq-default line-spacing 0)
-#+end_src
-
-#+RESULTS:
-: 0
+| doom--customize-themes-h-13 | doom--customize-themes-h-784 | doom--customize-themes-h-785 |
 
 ***** Roam
 #+begin_src elisp
