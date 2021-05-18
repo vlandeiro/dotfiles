@@ -35,6 +35,8 @@ source ~/.zsh_plugins
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
+# subword navigation (removed / and _)
+export WORDCHARS='*?-.[]~=&;!#$%^(){}<>'
 
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f ~/apps/google-cloud-sdk/path.zsh.inc ]; then source ~/apps//google-cloud-sdk/path.zsh.inc; fi
@@ -326,6 +328,7 @@ Host *
         +roam
         +pretty
         ;;+present
+        ;;+gnuplot
         )        ; using org-mode for presentations
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
@@ -423,8 +426,16 @@ Host *
              :append (anaconda-mode)
              :append (python-docstring-mode)
              )
-  )
+  (setq org-babel-default-header-args:jupyter-python '((:session . "*jpy*")
+                                                       (:async "yes")
+                                                       (:kernel . "python3")
+                                                       (:results . "drawer output raw"))))
+#+end_src
 
+#+RESULTS:
+: ((:session . *jpy*) (:async yes) (:kernel . python3) (:results . drawer output raw))
+
+#+begin_src elisp
 (defun +virgile/close-on-already-formatted (FORMATTER STATUS)
   "Closes the format-all window if the document was formatted without any error"
   (let (format-all-window (get-buffer-window "*format-all-errors*"))
@@ -447,6 +458,14 @@ Host *
 
 #+RESULTS:
 : +virgile/setup-org-jupyter
+
+#+begin_src elisp
+(after! poetry
+  (setq poetry-tracking-strategy 'projectile))
+#+end_src
+
+#+RESULTS:
+: projectile
 
 **** Magit
 #+begin_src elisp
