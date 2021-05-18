@@ -22,7 +22,9 @@
 #+begin_src sh :eval no :tangle ~/.zshrc
 source ~/.aliases
 source ~/.envvar
-source ~/.tempus.envvar
+if [ -f ~/.tempus.envvar ]; then
+    source ~/.tempus.envvar
+fi
 source ~/.myrc
 
 export ZSH_DISABLE_COMPFIX="true"
@@ -61,8 +63,11 @@ unset __conda_setup
 # init pyenv
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
 
+# init racket if installed
+if [ -d "/Applications/Racket/bin" ]; then
+    export PATH="/Applications/Racket/bin:$PATH"
+fi
 autoload -U +X bashcompinit && bashcompinit
 eval "$(starship init zsh)"
 #+end_src
@@ -630,14 +635,48 @@ Change default export options (no toc, latex-style superscript)
 **** Elfeed
 #+begin_src elisp
 (after! elfeed
-  (setq-default elfeed-search-filter "@2-days-ago")
+  (elfeed-score-enable)
+  (setq-default elfeed-search-filter "@3-days-ago -finance +unread")
   (map! :map elfeed-show-mode-map
         "a" #'pocket-reader-add-link)
   (map! :map elfeed-search-mode-map
         "a" #'pocket-reader-add-link)
-  )
+  (add-hook! 'elfeed-show-mode-hook #'variable-pitch-mode))
 #+end_src
 
+#+RESULTS:
+| variable-pitch-mode | doom--setq-shr-external-rendering-functions-for-elfeed-show-mode-h | doom--setq-shr-put-image-function-for-elfeed-show-mode-h | +rss-elfeed-wrap-h |
+
+#+begin_src elisp
+(after! elfeed-score
+  (setq elfeed-score-serde-score-file (expand-file-name "~/.config/elfeed.score"))
+;  (setq elfeed-search-print-entry-function #'elfeed-score-print-entry)
+  (define-key elfeed-search-mode-map "=" elfeed-score-map))
+#+end_src
+
+Scoring file for =elfeed-score=:
+#+begin_src elisp :tangle ~/.config/elfeed.score
+(("title-or-content"
+  (:text "mlops" :title-value 200 :content-value 100 :type w)
+  (:text "deploy" :title-value 100 :content-value 50 :type w)
+  (:text "ml" :title-value 100 :content-value 50 :type w)
+  (:text "machine learning" :title-value 100 :content-value 50 :type w)
+  (:text "data" :title-value 100 :content-value 50 :type w)
+  (:text "APIs?" :title-value 100 :content-value 50 :type R)
+  (:text "python" :title-value 200 :content-value 100 :type w)
+  (:text "emacs" :title-value 100 :content-value 50 :type w)
+  (:text "covid" :title-value -100 :content-value -50 :type w)
+  (:text "coronavirus" :title-value -100 :content-value -50 :type w)
+  (:text "N.B.A." :title-value -50 :content-value -50 :type W)
+  (:text "M.L.B." :title-value -200 :content-value -100 :type W)
+  (:text "Trump" :title-value -200 :content-value -100 :type W)
+  (:text "Biden\(.?s\)?" :title-value -50 :content-value -10 :type R)
+  (:text "\\[\\(europe\\|asia\\|middleeast\\) region\\]" :title-value -1000 :content-value -1000 :type r)
+  (:text "@FTLex" :title-value -1000 :content-value -1000 :type W)
+  (:text "open thread" :title-value -200 :content-value -100 :type w)
+  (:text "search results" :title-value -1000 :content-value -1000 :type W))
+ (mark -100))
+#+end_src
 **** Zen mode
 Turn off text zooming
 #+begin_src elisp
@@ -762,6 +801,10 @@ Increase garbage collector limit
   (setq gcmh-high-cons-threshold 33554432))
 #+end_src
 
+Make regex builder default to ='string= so I don't have to use =\\= to escape special characters
+#+begin_src elisp
+(setq reb-re-syntax 'string)
+#+end_src
 Doom popups
 #+begin_src elisp
 (map! :leader
@@ -784,10 +827,10 @@ Doom popups
 (package! mermaid-mode)
 (package! python-docstring)
 (package! org-ql)
+(package! elfeed-score)
 #+end_src
 
 ** Snippets
-
 *** Org mode
 #+BEGIN_SRC snippet :tangle ~/.doom.d/snippets/org-mode/jupyter-python
 # -*- mode: snippet -*-
