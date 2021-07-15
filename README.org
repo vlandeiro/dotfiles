@@ -41,11 +41,14 @@ bindkey "^[[1;5D" backward-word
 export WORDCHARS='*?-.[]~=&;!#$%^(){}<>'
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f ~/apps/google-cloud-sdk/path.zsh.inc ]; then source ~/apps//google-cloud-sdk/path.zsh.inc; fi
+if [ -d ~/apps/google-cloud-sdk ]; then
+    GC_SDK_HOME="~/apps/google-cloud-sdk"
+elif [ -d /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/ ]; then
+    GC_SDK_HOME="/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/"
+fi
 
-# The next line enables shell command completion for gcloud.
-if [ -f ~/apps/google-cloud-sdk/completion.zsh.inc ]; then source ~/apps//google-cloud-sdk/completion.zsh.inc; fi
-
+F="$GC_SDK_HOME/path.zsh.inc"; test -f $F && source $F
+F="$GC_SDK_HOME/completion.zsh.inc"; test -f $F && source $F
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
