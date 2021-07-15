@@ -219,8 +219,8 @@ Host *
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        hydra
        indent-guides     ; highlighted indent columns
-       (ligatures
-        +extra)
+       ;; ligatures
+        ;; +extra)
        modeline          ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink the current line after jumping
        ;;neotree           ; a project drawer, like NERDTree for vim
@@ -282,7 +282,7 @@ Host *
         +docsets
         +dictionary
         +offline)        ; ...or in Dash docsets locally
-       ;; lsp
+       ;;lsp
        (magit +forge)             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -340,6 +340,7 @@ Host *
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python
+        ;;+lsp
         +pyenv
         +poetry)            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
@@ -395,7 +396,8 @@ Host *
       doom-variable-pitch-font (font-spec :family "ETBembo" :style "RomanOSF" :size 16))
 #+end_src
 
-#+begin_src elisp
+Turn off ligatures for now since they're not working on my work laptop.
+#+begin_src elisp :tangle no
 (plist-put! +ligatures-extra-symbols
             ;; org
             :name          "≡"
