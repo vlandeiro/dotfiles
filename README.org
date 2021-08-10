@@ -614,8 +614,27 @@ Setup headlines fonts to use the ETBembo family and decreasing size.
                  :file-name "jira-tickets/%<%Y%m%d%H%M%S>-${title}"
                  :head "#+TITLE: ${title}\n#+ROAM_KEY: https://tempuslabs.atlassian.net/browse/${title}\n\n")
                )
+  (add-to-list 'org-roam-capture-templates
+               '("p" "People" plain
+                 #'org-roam-capture--get-point
+                 "%?"
+                 :file-name "people/%<%Y%m%d%H%M%S>-${title}"
+                 :head "#+TITLE: ${title}\n#+ROAM_ALIAS: \n\n- tags :: [[file:../20210802103417-people.org][People]]\n- name :: \n- where :: [[file:../20200605132730-tempus.org][Tempus]]\n- what :: ")
+               )
+  (add-to-list 'org-roam-capture-templates
+               '("b" "Book" plain
+                 #'org-roam-capture--get-point
+                 "%?"
+                 :file-name "book/%<%Y%m%d%H%M%S>-${title}"
+                 :head "#+TITLE: ${title}\n\n- tags :: [[file:../20210810141921-book.org][Book]]\n- author :: \n- link :: ")
+               )
   )
 #+end_src
+
+#+RESULTS:
+| b | Book | plain | #'org-roam-capture--get-point | %? | :file-name | book/%<%Y%m%d%H%M%S>-${title} | :head | #+TITLE: ${title} |
+
+
 
 ***** Bindings
 #+begin_src elisp
@@ -658,6 +677,19 @@ Change default export options (no toc, latex-style superscript)
    org-export-with-sub-superscripts '{}
    org-export-with-smart-quotes nil
    )
+  )
+#+end_src
+
+#+RESULTS:
+
+Add support for image attachments ([[https://github.com/hlissner/doom-emacs/issues/3185][github issue]]):
+#+begin_src elisp
+(after! org
+  (defadvice! no-errors/+org-inline-image-data-fn (_protocol link _description)
+    :override #'+org-inline-image-data-fn
+    "Interpret LINK as base64-encoded image data. Ignore all errors."
+    (ignore-errors
+      (base64-decode-string link)))
   )
 #+end_src
 
