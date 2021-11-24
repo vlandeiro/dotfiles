@@ -161,24 +161,6 @@ Host *
      UseKeychain yes
      IdentityFile ~/.ssh/github_rsa
 #+end_src
-** GCP
-#+begin_src elisp
-(after! tramp
-  (add-to-list 'tramp-methods
-               '("gcssh"
-                 (tramp-login-program        "gcloud compute ssh")
-                 (tramp-login-args           (("%h")))
-                 (tramp-login-env            (("LOGNAME" "virgile_landeiro")))
-                 (tramp-async-args           (("-q")))
-                 (tramp-remote-shell         "/bin/sh")
-                 (tramp-remote-shell-args    ("-c"))
-                 (tramp-gw-args              (("-o" "GlobalKnownHostsFile=/dev/null")
-                                              ("-o" "UserKnownHostsFile=/dev/null")
-                                              ("-o" "StrictHostKeyChecking=no")))
-                 (tramp-default-port         22))))
-#+end_src
-
-
 * Git
 ** Config
 
@@ -354,7 +336,7 @@ Host *
         ;;+dragndrop       ; drag & drop files/images into org buffers
         +pandoc          ; export-with-pandoc support
         +jupyter
-        +roam
+        +roam2
         +pretty
         ;;+present
         ;;+gnuplot
@@ -467,17 +449,16 @@ Turn off ligatures for now since they're not working on my work laptop.
 : ((:session . *jpy*) (:async yes) (:kernel . python3) (:results . drawer output raw))
 
 #+begin_src elisp
-(defun +virgile/close-on-already-formatted (FORMATTER STATUS)
-  "Closes the format-all window if the document was formatted without any error"
-  (let (format-all-window (get-buffer-window "*format-all-errors*"))
-    (if (and (member STATUS '(:already-formatted :reformatted))
-             format-all-window)
-        (delete-window format-all-window))
-    )
-  )
-
 (after! format-all
-  (add-hook! 'format-all-after-format-functions :append +virgile/close-on-already-formatted)
+  (defun +virgile/close-on-already-formatted (FORMATTER STATUS)
+    "Closes the format-all window if the document was formatted without any error"
+    (let (format-all-window (get-buffer-window "*format-all-errors*"))
+      (if (and (member STATUS '(:already-formatted :reformatted))
+               format-all-window)
+          (delete-window format-all-window))
+      )
+    )
+  ;; (add-hook! 'format-all-after-format-functions :append +virgile/close-on-already-formatted)
   )
 
 (defun +virgile/setup-org-jupyter nil
@@ -621,33 +602,29 @@ Setup headlines fonts to use the ETBembo family and decreasing size.
   (setq
    org-roam-graph-viewer "open"
    org-roam-dailies-directory "daily/"
-   org-roam-dailies-capture-templates '(("d" "default" plain
-                                         #'org-roam-capture--get-point
-                                         "* %?"
-                                         :file-name "daily/%<%Y-%m-%d>"
-                                         :head "#+TITLE: %<%Y-%m-%d>\n#+DATE: <%<%Y-%m-%d %a>>\n\n* Check-in [/]\n"))
+   org-roam-dailies-capture-templates '(("d" "default" plain "%?"
+                                         :target (file+head "%<%Y-%m-%d>.org"
+                                                            "#+TITLE: %<%Y-%m-%d>\n#+DATE: <%<%Y-%m-%d %a>>\n\n* Check-in [/]\n")
+                                         :unnarrowed t))
    org-roam-graph-exclude-matcher '("private" "daily" "jira-tickets")
    )
   (add-to-list 'org-roam-capture-templates
-               '("j" "JIRA ticket" plain
-                 #'org-roam-capture--get-point
-                 "%?"
-                 :file-name "jira-tickets/%<%Y%m%d%H%M%S>-${title}"
-                 :head "#+TITLE: ${title}\n#+ROAM_KEY: https://tempuslabs.atlassian.net/browse/${title}\n\n")
+               '("j" "JIRA ticket" plain "%?"
+                 :target (file+head "jira-tickets/%<%Y%m%d%H%M%S>-${title}.org"
+                                    "#+TITLE: ${title}\n#+ROAM_KEY: https://tempuslabs.atlassian.net/browse/${title}\n\n")
+                 :unnarrowed t)
                )
   (add-to-list 'org-roam-capture-templates
-               '("p" "People" plain
-                 #'org-roam-capture--get-point
-                 "%?"
-                 :file-name "people/%<%Y%m%d%H%M%S>-${title}"
-                 :head "#+TITLE: ${title}\n#+ROAM_ALIAS: \n\n- tags :: [[file:../20210802103417-people.org][People]]\n- name :: \n- where :: [[file:../20200605132730-tempus.org][Tempus]]\n- what :: ")
+               '("p" "People" plain "%?"
+                 :target (file+head "people/%<%Y%m%d%H%M%S>-${title}.org"
+                                    "#+TITLE: ${title}\n#+ROAM_ALIAS: \n\n- tags :: [[file:../20210802103417-people.org][People]]\n- name :: \n- where :: [[file:../20200605132730-tempus.org][Tempus]]\n- what :: ")
+                 :unnarrowed t)
                )
   (add-to-list 'org-roam-capture-templates
-               '("b" "Book" plain
-                 #'org-roam-capture--get-point
-                 "%?"
-                 :file-name "book/%<%Y%m%d%H%M%S>-${title}"
-                 :head "#+TITLE: ${title}\n\n- tags :: [[file:../20210810141921-book.org][Book]]\n- author :: \n- link :: ")
+               '("b" "Book" plain "%?"
+                 :target (file+head "book/%<%Y%m%d%H%M%S>-${title}.org"
+                                    "#+TITLE: ${title}\n\n- tags :: [[file:../20210810141921-book.org][Book]]\n- author :: \n- link :: ")
+                 :unnarrowed t)
                )
   )
 #+end_src
@@ -895,6 +872,24 @@ Doom popups
       :desc "Show popup" "t p" #'+popup/toggle
       )
 #+end_src
+
+*** GCP
+#+begin_src elisp
+(after! tramp
+  (add-to-list 'tramp-methods
+               '("gcssh"
+                 (tramp-login-program        "gcloud compute ssh")
+                 (tramp-login-args           (("%h") ("--tunnel-through-iap")))
+                 (tramp-login-env            (("LOGNAME" "virgile_landeiro")))
+                 (tramp-async-args           (("-q")))
+                 (tramp-remote-shell         "/bin/sh")
+                 (tramp-remote-shell-args    ("-c"))
+                 (tramp-gw-args              (("-o" "GlobalKnownHostsFile=/dev/null")
+                                              ("-o" "UserKnownHostsFile=/dev/null")
+                                              ("-o" "StrictHostKeyChecking=no")))
+                 (tramp-default-port         22))))
+#+end_src
+
 
 ** Packages
 :PROPERTIES:
