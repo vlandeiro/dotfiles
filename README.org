@@ -1,5 +1,5 @@
 * Manual installations
-
+- [[https://brew.sh][Homebrew]]
 - [[https://vivaldi.com][Vivaldi]]
   + [[https://darkreader.org][DarkReader]]
   + [[https://lastpass.com/misc_download2.php][LastPass]]
@@ -7,7 +7,6 @@
   + [[https://chrome.google.com/webstore/detail/save-to-pocket/niloccemoadcdkdjlinkgdfekeahmflj?hl=en][Pocket]]
   + [[https://chrome.google.com/webstore/detail/refined-github/hlepfoohegkhhmjieoechaddaejaokhf?hl=en][Refined GitHub]]
   + [[https://chrome.google.com/webstore/detail/better-pull-request-for-g/nfhdjopbhlggibjlimhdbogflgmbiahc?hl=en][Better Pull Requests for GitHub]]
-  + [[https://chrome.google.com/webstore/detail/the-great-discarder/jlipbpadkjcklpeiajndiijbeieicbdh?hl=en][The Great Discarder]]
 - [[https://iterm2.com/downloads.html][iTerm2]]
 - Fonts
   + [[https://github.com/source-foundry/Hack#macos][Hack]]
@@ -15,9 +14,22 @@
 - [[https://hub.docker.com/editions/community/docker-ce-desktop-mac/][Docker]]
 - Spotify
 - Pocket Reader
-- Spectacle / Rectangle
+- [[https://github.com/rxhanson/Rectangle][Rectangle]]
 
 * Terminal
+** Starship
+*** Install
+#+begin_src sh
+curl -fsSL https://starship.rs/install.sh | bash
+#+end_src
+
+#+RESULTS:
+
+*** Configuration
+#+begin_src conf-toml :eval no :tangle ~/.config/starship.toml
+[directory]
+truncate_to_repo = false
+#+end_src
 ** Zsh
 #+begin_src sh :eval no :tangle ~/.zshrc
 source ~/.aliases
@@ -115,19 +127,6 @@ alias l='ls'
 alias ll='ls -lh'
 alias lla='ls -lah'
 alias la='ls -lah'
-#+end_src
-** Starship
-*** Install
-#+begin_src sh
-curl -fsSL https://starship.rs/install.sh | bash
-#+end_src
-
-#+RESULTS:
-
-*** Configuration
-#+begin_src conf-toml :eval no :tangle ~/.config/starship.toml
-[directory]
-truncate_to_repo = false
 #+end_src
 ** Command Line Tools
 Installs a bunch of useful tools
