@@ -1,0 +1,6 @@
+vsync = "opengl-swc";
+backend = "glx";
+shadow = true;
+no-dock-shadow = true;
+inactive-opacity = 0.8;
+fading = true;

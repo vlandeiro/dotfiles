@@ -1,0 +1,14 @@
+[user]
+        name = Virgile Landeiro
+        email = MY_EMAIL
+[color]
+        ui = auto
+[core]
+        autocrlf = true
+[alias]
+        st = status
+        ci = commit
+        co = checkout
+        br = branch
+[push]
+        default = matching
