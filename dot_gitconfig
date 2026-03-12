@@ -1,0 +1,21 @@
+[user]
+# Please adapt and uncomment the following lines:
+	name = Virgile Landeiro
+	email = virgile.landeiro@gmail.com
+
+[alias]
+	co = checkout
+	ci = commit
+	st = status
+	br = branch
+	tree = log --graph --oneline
+	squash = rebase -i
+    
+[github]
+	user = vlandeiro
+
+[core]
+    editor = emacs
+
+[diff]
+    tool = magit

@@ -1,0 +1,38 @@
+source ~/.aliases
+source ~/.secrets
+
+export ZSH_DISABLE_COMPFIX="true"
+
+eval "$(starship init zsh)"
+
+source ~/repos/znap/znap.zsh
+source ~/.zsh_plugins
+
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+
+# subword navigation (removed / and _)
+export WORDCHARS='*?-.[]~=&;!#$%^(){}<>'
+
+autoload -U +X bashcompinit && bashcompinit
+eval "$(starship init zsh)"
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+. "$HOME/.local/share/../bin/env"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/virgile/.lmstudio/bin"
+# End of LM Studio CLI section
+
+
+# bun completions
+[ -s "/Users/virgile/.bun/_bun" ] && source "/Users/virgile/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+export EDITOR="emacs"

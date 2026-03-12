@@ -1,0 +1,8 @@
+# Custom words for Whisper transcription cleaning
+# One word or phrase per line. Lines starting with # are ignored.
+# These are passed to the LLM so it can correct phonetically similar transcription errors.
+#
+# Examples:
+Virgile
+Ollama
+LLM
